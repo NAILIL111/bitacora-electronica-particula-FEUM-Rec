@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitácora Electrónica – FEUM Partículas (V7q • Final CORR • OFFLINE)</title>
+<style>
+  :root{--als-blue:#002D62;--als-green:#3BA935;--als-gray:#E5E5E5;--line:#D3D7DB;--bg:#FFFFFF;--warn:#fd7e14}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:#000;font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:2px solid var(--als-blue);background:#F9FAFB;position:sticky;top:0;z-index:10}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{height:42px;width:auto;border-radius:6px;border:1px solid var(--line);background:#fff}
+  .brand h1{margin:0;font-size:18px;color:#002D62}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  button{border:1px solid var(--line);background:#fff;color:#000;padding:8px 10px;border-radius:10px;cursor:pointer}
+  button.primary{background:var(--als-blue);color:#fff;border-color:var(--als-blue)}
+  button.warn{background:var(--warn);color:#fff;border-color:#c35d00}
+  button.ok{background:var(--als-green);color:#fff;border-color:#2d8b2a}
+  button.ghost{background:#fff;color:#002D62;border-color:#002D62}
+  button[disabled]{opacity:0.5;cursor:not-allowed}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;background:#fff}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;border:1px solid var(--line);background:#fff}
+  .chip.pass{background:#E9F8ED;border-color:#A6E3B6;color:#115e30}
+  .chip.fail{background:#FFF2F0;border-color:#FFB3A7;color:#8a1b10}
+  main{padding:16px;max-width:1100px;margin:0 auto;position:relative}
+  section{border:1px solid var(--line);border-radius:12px;margin:12px 0;padding:12px;background:#fff}
+  h2{font-size:16px;margin:0 0 8px 0;color:#002D62}
+  label{font-size:12px;color:#4B5563}
+  input,textarea,select{width:100%;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#000}
+  input[type='number']{text-align:right}
+  table{width:100%;border-collapse:collapse}
+  th,td{border:1px solid var(--line);padding:6px;vertical-align:top}
+  th{background:#F2F5F8;text-align:left}
+  .grid{display:grid;gap:8px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .mono{font-family:ui-monospace,Consolas,Menlo,monospace}
+  .mstep{margin:6px 0 10px 0;padding:8px;border:1px dashed var(--line);border-radius:10px;background:#FCFCFC}
+  .criteria-banner{border:1px solid #bcd;background:#F1F7FF;color:#0b2e53;border-radius:8px;padding:8px;margin:6px 0 10px 0}
+  .ops{border:1px dashed var(--line);border-radius:8px;padding:8px;margin-top:8px;background:#FCFCFC}
+  .formula{border:1px solid #d4d7dc;border-radius:10px;padding:10px;margin-top:6px;background:#FDFDFE}
+  .fx{font-family:Cambria, Georgia, 'Times New Roman', serif; font-size:16px; text-align:center}
+  .results-box{border:2px solid var(--als-blue);border-radius:10px;padding:10px;background:#FAFBFF}
+  .pass{background:#E9F8ED;border-color:#A6E3B6}
+  .fail{background:#FFF2F0;border-color:#FFB3A7}
+  canvas.sign{border:1px dashed var(--line);border-radius:8px;background:#fff;width:100%;height:120px;touch-action:none;cursor:crosshair}
+  .sign-row{display:flex;gap:8px;align-items:center}
+  .sign-ctrls{display:flex;flex-direction:column;gap:6px;min-width:120px}
+  .audit-scroll{overflow:auto}
+  .audit-table{min-width:980px}
+  td.hash-full{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:12px;overflow-wrap:anywhere;word-break:break-word}
+  @media print{
+    .no-print{display:none!important}
+    body{background:#fff}
+    section{break-inside:avoid-page}
+    main{max-width:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <!-- Logo embebido (OFFLINE) -->
+    <img class="brand-logo" alt="ALS" title="ALS" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc4NCcgaGVpZ2h0PSc4NCc+PHJlY3Qgd2lkdGg9JzEwMCUnIGhlaWdodD0nMTAwJScgcng9JzEwJyByeT0nMTAnIGZpbGw9JyNGRkZGRkYnIHN0cm9rZT0nI0QzRDdEQicvPjxjaXJjbGUgY3g9JzQyJyBjeT0nNDInIHI9JzI4JyBmaWxsPScjMDAyRDYyJy8+PHRleHQgeD0nNDInIHk9JzQ4JyBmb250LWZhbWlseT0nQXJpYWwsIHNhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMjAnIGZpbGw9JyNGRkZGRkYnIHRleHQtYW5jaG9yPSdtaWRkbGUnPkFMUzwvdGV4dD48L3N2Zz4=">
+    <h1>Bitácora Electrónica – FEUM Partículas</h1>
+  </div>
+  <div class="actions no-print">
+    <button id="btnNew">Nueva bitácora</button>
+    <button id="btnHistory">Historial</button>
+    <span class="badge" id="badgeCount">Archivados: 0</span>
+    <button class="primary" id="btnSave" title="Guardar en este navegador">Guardar</button>
+    <button id="btnLoad">Cargar</button>
+    <button class="warn" id="btnClear">Limpiar</button>
+    <button class="ghost" id="btnLock">Bloquear y firmar</button>
+    <button class="ok" id="btnCorrection" disabled>Nueva corrección</button>
+    <button class="ok" id="btnPrint" onclick="window.print()">Imprimir/PDF</button>
+    <button id="btnExportJSON">Exportar JSON</button>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Identificación -->
+  <section>
+    <h2>Bitácora Electrónica (BE) – Identificación</h2>
+    <div class="grid g4">
+      <div><label>Folio</label><input data-field="folio" id="folio"></div>
+      <div><label>F. Informativa</label><input type="date" data-field="f_informativa" id="f_informativa"></div>
+      <div><label>Cliente</label><input data-field="cliente" id="cliente"></div>
+      <div><label>Producto</label><input data-field="producto" id="producto"></div>
+    </div>
+    <div style="margin-top:8px" class="grid g2">
+      <div><label>Prueba</label><input data-field="prueba" id="prueba" value="Partículas microscópicas"></div>
+      <div><label>Referencia bibliográfica</label><input data-field="ref_biblio" id="ref_biblio" placeholder="Norma / Método"></div>
+    </div>
+    <div class="grid g3" style="margin-top:8px">
+      <div><label>Estado</label><input id="estado" value="Abierta" readonly></div>
+      <div><label>Sello digital (hash SHA-256)</label><input id="hash" readonly></div>
+      <div><label>Cadena auditoría (hash)</label><input id="chain" readonly></div>
+    </div>
+  </section>
+
+  <!-- Inicio del análisis -->
+  <section>
+    <h2>Inicio del análisis</h2>
+    <div class="grid g2">
+      <div><label>Fecha de inicio</label><input type="date" data-field="fecha_inicio" id="fecha_inicio"></div>
+      <div><label>Hora de inicio</label><input type="time" data-field="hora_inicio" id="hora_inicio"></div>
+    </div>
+    <div class="no-print" style="margin-top:6px"><button type="button" class="ghost" id="btnMarkInicio">Marcar inicio (ahora)</button></div>
+  </section>
+
+  <!-- Especificación -->
+  <section>
+    <h2>Especificación de la prueba</h2>
+    <div class="criteria-banner">
+      <strong>Partículas microscópicas</strong><br>
+      ≥10 µm: ≤ 6 000 part/cont • ≥25 µm: ≤ 600 part/cont
+    </div>
+  </section>
+
+  <!-- Desarrollo analítico -->
+  <section>
+    <h2>Desarrollo analítico – Determinación de partículas en soluciones inyectables. Método 1, Obstrucción de luz.</h2>
+
+    <!-- Materiales y/o insumos -->
+    <div class="mstep">
+      <h3 style="margin:0 0 6px 0">Materiales y/o Insumos</h3>
+      <div style="font-size:13px;color:#374151;margin-bottom:6px">
+        Material de vidrio verificado con agua inyectable libre de partículas.
+      </div>
+      <div style="margin-bottom:8px">
+        <label>Fecha de verificación de material</label>
+        <div style="display:flex;gap:8px;align-items:center"><input type="date" data-field="mat_verif_fecha" id="mat_verif_fecha"><button type="button" class="ghost" id="btnMarkVerifMat">Marcar verificación (hoy)</button></div>
+      </div>
+      <table>
+        <thead><tr><th>Insumo</th><th>Lote</th><th>Caducidad</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Membrana de 0.22 µm</td>
+            <td><input data-field="insumo_membrana_lote"></td>
+            <td><input type="date" data-field="insumo_membrana_cad"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Reactivos -->
+    <div class="mstep">
+      <h3 style="margin:0 0 6px 0">Reactivos analíticos</h3>
+      <table>
+        <thead><tr><th>Nombre</th><th>Clave</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Agua inyectable libre de partículas (filtrada 0.22 µm)</td>
+            <td><input data-field="reactivo_agua_clave"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Lectura en SMP -->
+    <div class="mstep">
+      <h3 style="margin:0 0 6px 0">Lectura del blanco y muestra en el Sistema Medidor de Partículas</h3>
+      <div class="criteria-banner"><strong>Blanco – Criterios de aceptación:</strong> Las condiciones ambientales cumplen si el resultado del conteo de partículas para el blanco y la verificación del material de vidrio es de: No excede 10 partículas ≥10 µm y no excede 2 partículas ≥25 µm.</div>
+      <div class="grid g2">
+        <div>
+          <strong>Blanco:</strong>
+          <ol>
+            <li>Programar el equipo para que realice 3 alícuotas de 5.0 mL, descartando la primer alícuota.</li>
+            <li>Una vez concluido el tiempo de reposo agitar suavemente el frasco evitando generar burbujas.</li>
+            <li>Destapar el frasco e introducir cuidadosamente la sonda de muestreo e iniciar con el análisis.</li>
+          </ol>
+        </div>
+        <div>
+          <strong>Muestra:</strong>
+          <ol>
+            <li>Programar el equipo para que realice 4 alícuotas de 5.0 mL, descartando los valores de la primer alícuota.</li>
+            <li>Una vez concluido el tiempo de reposo agitar suavemente la muestra evitando generar burbujas.</li>
+            <li>Destapar el frasco e introducir cuidadosamente la sonda de muestreo e iniciar con el análisis.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="grid g3" style="margin-top:8px">
+        <div><label>Blanco ≥10 µm</label><input data-field="blanco_10" id="blanco_10" type="number" min="0" step="1"></div>
+        <div><label>Blanco ≥25 µm</label><input data-field="blanco_25" id="blanco_25" type="number" min="0" step="1"></div>
+        <div><label>Blanco (auto)</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span id="blancoChip" class="chip">—</span>
+            <span style="font-size:12px;color:#475569">Regla: ≥10 µm ≤ 10 y ≥25 µm ≤ 2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preparación de muestra -->
+    <div class="mstep">
+      <strong>Preparación de Muestra:</strong>
+      <ol>
+        <li>Retirar empaque secundario, etiquetas, sellos no en contacto con la muestra. Enjuagar exterior con agua inyectable libre de partículas.</li>
+        <li>Homogenizar 20 inversiones y preparar pool con
+          <input class="mono" style="width:70px" data-field="pool_n" id="n" type="number" min="1" step="1"> muestras ×
+          <input class="mono" style="width:70px" data-field="pool_v" id="v" type="number" min="0" step="0.1"> mL cada una, Vt=
+          <input class="mono" style="width:90px" data-field="pool_vt" id="vt" type="number" step="0.1" readonly> mL.</li>
+        <li>Desgasificar (baño ultrasónico 30 s) o reposo.</li>
+        <li>Agitar por rotación evitando burbujas y contaminación.</li>
+      </ol>
+      <div class="grid g3">
+        <div><label>P promedio muestra ≥10 µm</label><input data-field="p_avg_10" id="p_avg_10" type="number" min="0" step="1"></div>
+        <div><label>P promedio muestra ≥25 µm</label><input data-field="p_avg_25" id="p_avg_25" type="number" min="0" step="1"></div>
+        <div><label>VA (mL)</label><input data-field="va" id="va" value="5.0" type="number" step="0.1" min="0"></div>
+      </div>
+      <div class="grid g3" style="margin-top:10px">
+        <div>
+          <label>Hora de inicio de sonicación</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="datetime-local" data-field="t_son_i" id="t_son_i" step="1" readonly>
+            <button type="button" class="ghost" id="btnMarkStart">Marcar inicio (ahora)</button>
+          </div>
+        </div>
+        <div>
+          <label>Hora de término de sonicación</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="datetime-local" data-field="t_son_f" id="t_son_f" step="1" readonly>
+            <button type="button" class="ghost" id="btnMarkEnd">Marcar fin (ahora)</button>
+          </div>
+        </div>
+        <div>
+          <label>Duración calculada (s)</label>
+          <input data-field="t_son_dur" id="t_son_dur" type="number" step="1" min="0" readonly>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Condiciones operacionales -->
+  <section>
+    <h2>Condiciones operacionales</h2>
+    <div class="ops">
+      <div class="grid g3" style="margin-top:6px">
+        <div><label>Velocidad de la campana de flujo laminar (m/s)</label><input data-field="vel_campana" id="vel_campana"></div>
+        <div><label>Especificación</label><input value="0.36 – 0.54 m/s" readonly></div>
+        <div style="display:flex;align-items:flex-end"><span id="opsChip" class="chip">Estatus: —</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fórmulas -->
+  <section>
+    <h2>Fórmulas</h2>
+    <div class="formula">
+      <div class="fx">Partículas por envase = ( <b>P</b> / <b>VA</b> ) × ( <b>Vt</b> / <b>n</b> )</div>
+      <div class="grid g4" style="margin-top:8px">
+        <div><b>P:</b> Partículas promedio (Average del equipo)</div>
+        <div><b>VA:</b> Volumen de la alícuota (mL)</div>
+        <div><b>Vt:</b> Volumen total del pool (mL)</div>
+        <div><b>n:</b> Número de muestras combinadas</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resultados de muestra -->
+  <section>
+    <h2>Resultados de muestra</h2>
+    <div class="grid g2">
+      <div><label>≥10 µm (part./contenedor)</label><input data-field="res_10_final" id="res_10_final" readonly></div>
+      <div><label>≥25 µm (part./contenedor)</label><input data-field="res_25_final" id="res_25_final" readonly></div>
+    </div>
+    <div class="results-box" id="resultsBox" style="margin-top:10px">
+      <strong>Resultados: Partículas microscópicas</strong><br>
+      ≥10 µm: <span class="mono">—</span> part/cont<br>
+      ≥25 µm: <span class="mono">—</span> part/cont
+    </div>
+  </section>
+
+  <!-- Equipos e instrumentos -->
+  <section>
+    <h2>Equipos y/o instrumentos</h2>
+    <table id="equipTable">
+      <thead>
+        <tr>
+          <th>Nombre</th><th>Clave</th><th>Servicio</th><th>Fecha Servicio</th><th>Fecha próximo servicio</th><th>Estatus / Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="equipBody">
+        <tr>
+          <td><input data-field="eq_1_nombre" value="Campana de flujo laminar"></td>
+          <td><input data-field="eq_1_clave"></td>
+          <td><select data-field="eq_1_servicio" class="svcSel"><option></option><option>Calificación</option><option>Verificación</option><option>Calibración</option><option>NA</option></select></td>
+          <td><input type="date" data-field="eq_1_fserv" data-past-only></td>
+          <td><input type="date" data-field="eq_1_fprox" data-future-only></td>
+          <td>
+            <div style="display:flex;gap:6px;align-items:center">
+              <select data-field="eq_1_estatus" class="estatus-auto" disabled><option value=""></option><option>Vigente</option><option>No vigente</option><option>NA</option></select>
+              <button type="button" class="ghost delEquip" title="Borrar fila">– Borrar fila</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="no-print" style="margin-top:8px"><button class="ghost" id="btnAddEquip">+ Agregar fila</button></div>
+  </section>
+
+  <!-- Firmas -->
+  <section>
+    <h2>Firmas</h2>
+    <table>
+      <thead><tr><th>Rol</th><th>Nombre</th><th>Firma</th><th>Fecha y hora</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Realizó (Analista)</td>
+          <td><input data-field="analista" id="analista"></td>
+          <td>
+            <div class="sign-row">
+              <canvas class="sign" id="signA"></canvas>
+              <div class="sign-ctrls no-print">
+                <button type="button" class="ghost" id="clrA">Limpiar firma</button>
+              </div>
+            </div>
+          </td>
+          <td><input type="datetime-local" data-field="fin_analisis" id="fin_analisis" readonly>
+              <div style="margin-top:6px"><button type="button" id="btnMarkSignA">Marcar firma (ahora)</button></div></td>
+        </tr>
+        <tr>
+          <td>Revisó (Supervisor/Jefe)</td>
+          <td><input data-field="revisor" id="revisor"></td>
+          <td>
+            <div class="sign-row">
+              <canvas class="sign" id="signR"></canvas>
+              <div class="sign-ctrls no-print">
+                <button type="button" class="ghost" id="clrR">Limpiar firma</button>
+              </div>
+            </div>
+          </td>
+          <td><input type="datetime-local" data-field="rev_dt" id="rev_dt" readonly>
+              <div style="margin-top:6px"><button type="button" id="btnMarkSignR">Marcar firma (ahora)</button></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Trazabilidad -->
+  <section id="auditSection">
+    <h2>Trazabilidad</h2>
+    <div class="audit-scroll">
+      <table class="audit-table">
+        <thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th><th>Hash (SHA-256 completo)</th></tr></thead>
+        <tbody id="auditTable"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  // ===== Helpers =====
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const pad = n => String(n).padStart(2,'0');
+  const now = () => new Date();
+  const toDateInput = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const toTimeInput = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const toDTLocal = d => `${toDateInput(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  const parseDTLocal = v => v ? new Date(v) : null;
+
+  // ===== Elements =====
+  const el = {
+    // acciones
+    btnNew: $('#btnNew'),
+    btnHistory: $('#btnHistory'),
+    btnSave: $('#btnSave'),
+    btnLoad: $('#btnLoad'),
+    btnClear: $('#btnClear'),
+    btnLock: $('#btnLock'),
+    btnCorrection: $('#btnCorrection'),
+    btnExportJSON: $('#btnExportJSON'),
+    btnPrint: $('#btnPrint'),
+    badgeCount: $('#badgeCount'),
+    // identificación
+    folio: $('#folio'),
+    f_informativa: $('#f_informativa'),
+    cliente: $('#cliente'),
+    producto: $('#producto'),
+    prueba: $('#prueba'),
+    ref_biblio: $('#ref_biblio'),
+    estado: $('#estado'),
+    hash: $('#hash'),
+    chain: $('#chain'),
+    // inicio análisis
+    fecha_inicio: $('#fecha_inicio'),
+    hora_inicio: $('#hora_inicio'),
+    btnMarkInicio: $('#btnMarkInicio'),
+    // materiales
+    mat_verif_fecha: $('#mat_verif_fecha'),
+    btnMarkVerifMat: $('#btnMarkVerifMat'),
+    // blanco
+    blanco_10: $('#blanco_10'),
+    blanco_25: $('#blanco_25'),
+    blancoChip: $('#blancoChip'),
+    // preparación
+    n: $('#n'),
+    v: $('#v'),
+    vt: $('#vt'),
+    p_avg_10: $('#p_avg_10'),
+    p_avg_25: $('#p_avg_25'),
+    va: $('#va'),
+    t_son_i: $('#t_son_i'),
+    t_son_f: $('#t_son_f'),
+    t_son_dur: $('#t_son_dur'),
+    btnMarkStart: $('#btnMarkStart'),
+    btnMarkEnd: $('#btnMarkEnd'),
+    // ops
+    vel_campana: $('#vel_campana'),
+    opsChip: $('#opsChip'),
+    // resultados
+    res_10_final: $('#res_10_final'),
+    res_25_final: $('#res_25_final'),
+    resultsBox: $('#resultsBox'),
+    // equipos
+    equipTable: $('#equipTable'),
+    equipBody: $('#equipBody'),
+    btnAddEquip: $('#btnAddEquip'),
+    // firmas
+    analista: $('#analista'),
+    revisor: $('#revisor'),
+    signA: $('#signA'),
+    signR: $('#signR'),
+    clrA: $('#clrA'),
+    clrR: $('#clrR'),
+    btnMarkSignA: $('#btnMarkSignA'),
+    btnMarkSignR: $('#btnMarkSignR'),
+    fin_analisis: $('#fin_analisis'),
+    rev_dt: $('#rev_dt'),
+    // auditoría
+    auditTable: $('#auditTable'),
+  };
+
+  // ===== LocalStorage keys =====
+  const LS_PREFIX = 'BE_PART_';
+  const keyFor = () => {
+    const f = (el.folio.value || '').trim();
+    return f ? LS_PREFIX + f : `${LS_PREFIX}${Date.now()}`;
+  };
+
+  const refreshArchiveCount = () => {
+    const n = Object.keys(localStorage).filter(k => k.startsWith(LS_PREFIX)).length;
+    el.badgeCount.textContent = `Archivados: ${n}`;
+  };
+
+  // ===== Data capture =====
+  const collectData = () => {
+    const data = {};
+    $$( '[data-field]' ).forEach(i => {
+      const k = i.getAttribute('data-field');
+      data[k] = (i.type === 'number')
+        ? (i.value === '' ? null : Number(i.value))
+        : i.value || null;
+    });
+
+    // extras de identificación
+    data._folio = el.folio.value || null;
+    data._estado = el.estado.value || null;
+    data._hash = el.hash.value || null;
+    data._chain = el.chain.value || null;
+
+    // equipos (leer por filas)
+    data.equipos = [];
+    $$('#equipBody tr').forEach((tr, idx) => {
+      const row = {};
+      $$('[data-field]', tr).forEach(inp => {
+        row[inp.getAttribute('data-field')] = inp.value || null;
+      });
+      data.equipos.push(row);
+    });
+
+    // auditoría
+    data._audit = [];
+    $$('#auditTable tr').forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      data._audit.push({
+        fecha: tds[0].textContent,
+        usuario: tds[1].textContent,
+        accion: tds[2].textContent,
+        detalle: tds[3].textContent,
+        hash: tds[4].textContent
+      });
+    });
+
+    return data;
+  };
+
+  // ===== Hash & audit =====
+  async function sha256(text) {
+    // Fallback cuando file:// o contexto no seguro
+    if (!(window.crypto && window.crypto.subtle && window.isSecureContext)) {
+      console.warn('SHA-256 no disponible en contexto no seguro; se usa marcador temporal.');
+      let sum = 0; for (let i=0;i<text.length;i++) sum = (sum + text.charCodeAt(i)) % 1000000000;
+      return 'sha256-unavailable-' + sum.toString(16).padStart(8,'0');
+    }
+    const enc = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function recomputeHashAndChain(reason = 'Auto-actualización') {
+    const data = collectData();
+    const payload = JSON.stringify(data, Object.keys(data).sort());
+    const newHash = await sha256(payload);
+    const prevChain = el.chain.value || '';
+    const newChain = await sha256(prevChain + newHash);
+    el.hash.value = newHash;
+    el.chain.value = newChain;
+    logAudit('Cálculo hash', reason, newHash);
+  }
+
+  function logAudit(action, detail, hashPreview = '') {
+    const tr = document.createElement('tr');
+    const user = (el.revisor.value || el.analista.value || 'Sistema');
+    const ts = new Date();
+    tr.innerHTML = `
+      <td>${ts.toLocaleString()}</td>
+      <td>${user}</td>
+      <td>${action}</td>
+      <td>${detail || ''}</td>
+      <td class="hash-full">${hashPreview}</td>
+    `;
+    el.auditTable.appendChild(tr);
+  }
+
+  // ===== Cálculos =====
+  const updateVT = () => {
+    const n = Number(el.n.value || 0);
+    const v = Number(el.v.value || 0);
+    const vt = (n > 0 && v >= 0) ? n * v : 0;
+    el.vt.value = vt ? vt.toFixed(2) : '';
+  };
+
+  const updateBlancoChip = () => {
+    const b10 = Number(el.blanco_10.value || 0);
+    const b25 = Number(el.blanco_25.value || 0);
+    const ok = (el.blanco_10.value !== '' && el.blanco_25.value !== '' && b10 <= 10 && b25 <= 2);
+    el.blancoChip.textContent = ok ? 'Blanco: Cumple' : 'Blanco: No cumple';
+    el.blancoChip.classList.toggle('pass', ok);
+    el.blancoChip.classList.toggle('fail', !ok);
+  };
+
+  const updateOpsChip = () => {
+    const v = Number(el.vel_campana.value || NaN);
+    const ok = !isNaN(v) && v >= 0.36 && v <= 0.54;
+    el.opsChip.textContent = ok ? 'Estatus: Cumple' : 'Estatus: No cumple por velocidad';
+    el.opsChip.classList.toggle('pass', ok);
+    el.opsChip.classList.toggle('fail', !ok);
+  };
+
+  const formulaRes = (P, VA, Vt, n) => {
+    if (!P || !VA || !Vt || !n) return null;
+    if (VA <= 0 || n <= 0) return null;
+    return (P/VA)*(Vt/n);
+  };
+
+  const updateResultados = () => {
+    updateVT();
+    const P10 = Number(el.p_avg_10.value || 0);
+    const P25 = Number(el.p_avg_25.value || 0);
+    const VA  = Number(el.va.value || 0);
+    const Vt  = Number(el.vt.value || 0);
+    const n   = Number(el.n.value || 0);
+
+    const r10 = formulaRes(P10, VA, Vt, n);
+    const r25 = formulaRes(P25, VA, Vt, n);
+
+    el.res_10_final.value = (r10 == null) ? '' : Math.round(r10);
+    el.res_25_final.value = (r25 == null) ? '' : Math.round(r25);
+
+    const box = el.resultsBox;
+    const pass10 = (r10 != null) && r10 <= 6000;
+    const pass25 = (r25 != null) && r25 <= 600;
+    const txt10 = (r10 == null) ? '—' : Math.round(r10);
+    const txt25 = (r25 == null) ? '—' : Math.round(r25);
+    box.innerHTML = `<strong>Resultados: Partículas microscópicas</strong><br>
+      ≥10 µm: <span class="mono">${txt10}</span> part/cont<br>
+      ≥25 µm: <span class="mono">${txt25}</span> part/cont`;
+    const allKnown = (r10 != null && r25 != null);
+    box.classList.toggle('pass', allKnown && pass10 && pass25);
+    box.classList.toggle('fail', allKnown && !(pass10 && pass25));
+  };
+
+  // ===== Sonicación =====
+  const setStartNow = () => { el.t_son_i.value = toDTLocal(now()); };
+  const setEndNow = () => { el.t_son_f.value = toDTLocal(now()); calcDuracion(); };
+  const calcDuracion = () => {
+    const ti = parseDTLocal(el.t_son_i.value);
+    const tf = parseDTLocal(el.t_son_f.value);
+    if (!ti || !tf) { el.t_son_dur.value = ''; return; }
+    const s = Math.max(0, Math.round((tf - ti)/1000));
+    el.t_son_dur.value = String(s);
+  };
+
+  // ===== Inicio & verificación =====
+  const marcarInicioAhora = () => {
+    const d = now();
+    el.fecha_inicio.value = toDateInput(d);
+    el.hora_inicio.value  = toTimeInput(d);
+  };
+  const marcarVerifMatHoy = () => { el.mat_verif_fecha.value = toDateInput(now()); };
+
+  // ===== Equipos =====
+  const recomputeRowStatus = (tr) => {
+    const selSvc = tr.querySelector('.svcSel');
+    const estSel = tr.querySelector('.estatus-auto');
+    const fProx  = tr.querySelector('[data-field$="_fprox"]');
+    if (!selSvc || !estSel) return;
+    const svc = selSvc.value || '';
+    if (svc === 'NA') { estSel.value = 'NA'; return; }
+    const v = fProx && fProx.value ? new Date(fProx.value + 'T00:00:00') : null;
+    if (!v) { estSel.value = ''; return; }
+    const today = new Date(); today.setHours(0,0,0,0);
+    estSel.value = (v >= today) ? 'Vigente' : 'No vigente';
+  };
+
+  const wireRow = (tr) => {
+    $$('[data-past-only]', tr).forEach(i => i.addEventListener('change', () => {
+      const d = new Date(i.value);
+      const today = new Date(); today.setHours(0,0,0,0);
+      if (d > today) { i.value = toDateInput(today); }
+      recomputeRowStatus(tr);
+    }));
+    $$('[data-future-only]', tr).forEach(i => i.addEventListener('change', () => {
+      const d = new Date(i.value);
+      const today = new Date(); today.setHours(0,0,0,0);
+      if (d < today) { i.value = toDateInput(today); }
+      recomputeRowStatus(tr);
+    }));
+    tr.querySelector('.svcSel')?.addEventListener('change', () => recomputeRowStatus(tr));
+    tr.querySelector('[data-field$="_fprox"]')?.addEventListener('change', () => recomputeRowStatus(tr));
+    tr.querySelector('.delEquip')?.addEventListener('click', () => {
+      if ($$('#equipBody tr').length > 1) tr.remove();
+    });
+  };
+
+  const addEquipRow = () => {
+    const idx = $$('#equipBody tr').length + 1;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input data-field="eq_${idx}_nombre"></td>
+      <td><input data-field="eq_${idx}_clave"></td>
+      <td><select data-field="eq_${idx}_servicio" class="svcSel"><option></option><option>Calificación</option><option>Verificación</option><option>Calibración</option><option>NA</option></select></td>
+      <td><input type="date" data-field="eq_${idx}_fserv" data-past-only></td>
+      <td><input type="date" data-field="eq_${idx}_fprox" data-future-only></td>
+      <td>
+        <div style="display:flex;gap:6px;align-items:center">
+          <select data-field="eq_${idx}_estatus" class="estatus-auto" disabled>
+            <option value=""></option><option>Vigente</option><option>No vigente</option><option>NA</option>
+          </select>
+          <button type="button" class="ghost delEquip" title="Borrar fila">– Borrar fila</button>
+        </div>
+      </td>`;
+    el.equipBody.appendChild(tr);
+    wireRow(tr);
+  };
+
+  wireRow(el.equipBody.querySelector('tr'));
+
+  // ===== Firmas (canvas) =====
+  const mkSigner = (canvas) => {
+    const ctx = canvas.getContext('2d');
+    let drawing = false, last = null;
+    const pos = e => {
+      const r = canvas.getBoundingClientRect();
+      const x = (e.touches? e.touches[0].clientX : e.clientX) - r.left;
+      const y = (e.touches? e.touches[0].clientY : e.clientY) - r.top;
+      return {x,y};
+    };
+    const start = e => { e.preventDefault(); drawing = true; last = pos(e); };
+    const move = e => {
+      if (!drawing) return;
+      const p = pos(e);
+      ctx.beginPath();
+      ctx.moveTo(last.x, last.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      last = p;
+    };
+    const end = () => { drawing = false; };
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, {passive:false});
+    canvas.addEventListener('touchmove', move, {passive:false});
+    canvas.addEventListener('touchend', end);
+    return { clear: () => ctx.clearRect(0,0,canvas.width,canvas.height) };
+  };
+
+  const signerA = mkSigner(el.signA);
+  const signerR = mkSigner(el.signR);
+
+  // ===== Guardado / Carga / Historial =====
+  const saveCurrent = async () => {
+    await recomputeHashAndChain('Guardado');
+    const data = collectData();
+    const k = keyFor();
+    localStorage.setItem(k, JSON.stringify(data));
+    if (!el.folio.value) {
+      const ts = new Date();
+      el.folio.value = `AUTO-${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}-${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}`;
+    }
+    refreshArchiveCount();
+    alert('Bitácora guardada en este navegador.');
+  };
+
+  const loadFromKey = (k) => {
+    const raw = localStorage.getItem(k);
+    if (!raw) { alert('No se encontró ese folio.'); return; }
+    const data = JSON.parse(raw);
+    $$('[data-field]').forEach(i => {
+      const key = i.getAttribute('data-field');
+      if (key in data) i.value = (data[key] ?? '');
+    });
+    el.folio.value = data._folio || '';
+    el.estado.value = data._estado || 'Abierta';
+    el.hash.value = data._hash || '';
+    el.chain.value = data._chain || '';
+    el.equipBody.innerHTML = '';
+    (data.equipos || []).forEach((row, idx) => {
+      addEquipRow();
+      const tr = $$('#equipBody tr')[idx];
+      if (!tr) return;
+      $$('[data-field]', tr).forEach(inp => {
+        const k2 = inp.getAttribute('data-field');
+        inp.value = row[k2] ?? '';
+      });
+      recomputeRowStatus(tr);
+    });
+    el.auditTable.innerHTML = '';
+    (data._audit || []).forEach(a => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${a.fecha}</td><td>${a.usuario}</td><td>${a.accion}</td><td>${a.detalle}</td><td class="hash-full">${a.hash}</td>`;
+      el.auditTable.appendChild(tr);
+    });
+    updateBlancoChip();
+    updateOpsChip();
+    updateResultados();
+  };
+
+  const showHistory = () => {
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(LS_PREFIX));
+    if (!keys.length) { alert('No hay historial en este navegador.'); return; }
+    const msg = 'Selecciona un índice para cargar:\n' + keys.map((k,i)=>`${i+1}. ${k.replace(LS_PREFIX,'')}`).join('\n');
+    const pick = prompt(msg);
+    const idx = Number(pick) - 1;
+    if (idx>=0 && idx<keys.length) loadFromKey(keys[idx]);
+  };
+
+  const newBlank = () => {
+    $$('input, textarea, select').forEach(i => {
+      if (i.readOnly && (i.id==='hash' || i.id==='chain')) return;
+      if (i.type==='checkbox' || i.type==='radio') i.checked = false;
+      else i.value = '';
+    });
+    el.estado.value = 'Abierta';
+    el.hash.value = '';
+    el.chain.value = '';
+    el.auditTable.innerHTML = '';
+    el.equipBody.innerHTML = '';
+    addEquipRow();
+    updateBlancoChip();
+    updateOpsChip();
+    updateResultados();
+  };
+
+  const clearThis = () => {
+    const k = keyFor();
+    if (confirm('¿Eliminar la versión guardada para este folio (si existe)?')) {
+      localStorage.removeItem(k);
+      refreshArchiveCount();
+      alert('Eliminado (si existía). La pantalla no se limpió automáticamente.');
+    }
+  };
+
+  // ===== Bloquear / Corrección =====
+  const setLocked = (locked) => {
+    const controls = $$('input, textarea, select, button');
+    controls.forEach(c => {
+      const keepEnabled = ['btnNew','btnHistory','btnPrint','btnExportJSON','btnCorrection'].includes(c.id);
+      c.disabled = locked && !keepEnabled;
+    });
+    el.btnCorrection.disabled = !locked;
+    el.estado.value = locked ? 'Cerrada (Bloqueada y firmada)' : 'Abierta';
+  };
+
+  const makeCorrection = () => {
+    setLocked(false);
+    const f = el.folio.value || '';
+    if (f && !/-CORR(\d+)?$/.test(f)) {
+      el.folio.value = f + '-CORR1';
+    } else if (/-CORR(\d+)$/.test(f)) {
+      const n = Number(f.match(/-CORR(\d+)$/)[1]);
+      el.folio.value = f.replace(/-CORR\d+$/, `-CORR${n+1}`);
+    }
+    logAudit('Corrección', 'Se abrió una nueva corrección sobre la bitácora.');
+  };
+
+  // ===== Export JSON =====
+  const exportJSON = async () => {
+    await recomputeHashAndChain('Exportación JSON');
+    const data = collectData();
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    const fol = (el.folio.value || 'bitacora');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${fol}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  // ===== Event wiring =====
+  [el.blanco_10, el.blanco_25].forEach(i => i.addEventListener('input', updateBlancoChip));
+  el.vel_campana.addEventListener('input', updateOpsChip);
+  [el.n, el.v, el.va, el.p_avg_10, el.p_avg_25].forEach(i => i.addEventListener('input', updateResultados));
+  el.btnMarkStart.addEventListener('click', () => { setStartNow(); calcDuracion(); });
+  el.btnMarkEnd.addEventListener('click', setEndNow);
+  el.t_son_i.addEventListener('change', calcDuracion);
+  el.t_son_f.addEventListener('change', calcDuracion);
+  el.btnMarkInicio.addEventListener('click', marcarInicioAhora);
+  el.btnMarkVerifMat.addEventListener('click', marcarVerifMatHoy);
+  el.btnAddEquip.addEventListener('click', addEquipRow);
+  el.clrA.addEventListener('click', () => signerA.clear());
+  el.clrR.addEventListener('click', () => signerR.clear());
+  el.btnMarkSignA.addEventListener('click', () => { el.fin_analisis.value = toDTLocal(now()); });
+  el.btnMarkSignR.addEventListener('click', () => { el.rev_dt.value = toDTLocal(now()); });
+  el.btnSave.addEventListener('click', saveCurrent);
+  el.btnLoad.addEventListener('click', () => {
+    const fol = prompt('Escribe el folio a cargar (exacto). Si no lo recuerdas, usa "Historial".');
+    if (!fol) return;
+    loadFromKey(LS_PREFIX + fol);
+  });
+  el.btnHistory.addEventListener('click', showHistory);
+  el.btnNew.addEventListener('click', newBlank);
+  el.btnClear.addEventListener('click', clearThis);
+  el.btnLock.addEventListener('click', async () => {
+    await recomputeHashAndChain('Bloqueo/Firma');
+    setLocked(true);
+    alert('Bitácora bloqueada (solo lectura). Usa "Nueva corrección" para reabrir una versión de corrección.');
+  });
+  el.btnCorrection.addEventListener('click', makeCorrection);
+  el.btnExportJSON.addEventListener('click', exportJSON);
+
+  // ===== Init =====
+  refreshArchiveCount();
+  updateBlancoChip();
+  updateOpsChip();
+  updateResultados();
+})();
+</script>
+
+</body>
+</html>
